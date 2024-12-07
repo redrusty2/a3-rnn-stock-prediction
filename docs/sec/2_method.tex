@@ -1,0 +1,51 @@
+\section{Method} \label{sec:method}
+
+\subsection{Dataset}
+
+The dataset consists of daily Google stock data sourced from \textit{Yahoo Finance}\cite{goog} with the \textit{yfinance} Python package\cite{yfinance}, spanning from 2004 to 2019. The features include the closing, high, low, and opening prices, as well as trading volume and the date. The dataset was divided into training and testing subsets, with the training portion further split into separate training and validation sets. All features were standardised using the z-score method, with the mean and standard deviation estimated from the training set and subsequently applied to the test set. Z-score was used to make sure the model can generalise to values outside the range of the training set.
+
+2019 was chosen as the endpoint since the COVID-19 pandemic caused significant market fluctuations, which could potentially skew the model’s performance. 
+
+The test set was chosen to be the last 15\% of the data, the validation set was chosen to be the last 15\% of the training set, and the training set was the remaining 72.25\% of the data.
+
+\subsection{Strategy}
+
+The trading strategy involves examining the predicted price three days into the future on each day. If the model forecasts a higher price compared to the current one, a fixed quantity of the stock is purchased and held until the third day, at which point it is sold. If the prediction indicates a lower price, no action is taken. The total return percentage is calculated by summing the return percentage from each trade.
+
+For example if 3 trades are made with returns of 10\%, 5\%, and 2\%, the total return would be 17\%.
+
+This is a very naive strategy and does not take into account transaction costs, slippage, or other factors that would be present in a real-world scenario but gives a good starting point.
+
+\subsection{Model}
+
+The model\cite{rnn_pytorch} is based on an LSTM architecture followed by a fully connected (FC) layer. The LSTM receives the feature set and produces representations that the FC layer uses to output the future close, open, high, low, and volume predictions. Multiple configurations of the LSTM were explored, including varying the number of layers, hidden layer sizes, and the choice of which outputs (entire sequence, final time step) were fed into the FC layer.
+
+All models were implemented with 5 input features and 5 output features per day.  
+
+2 versions of the model were tested. One where the entire LSTM output sequence was fed into the FC layer and one where only the final hidden state was fed into the FC layer.
+
+Multiple layers were also tested. This is where the output of the LSTM is fed into another LSTM layer. This was tested with 1 and 2 layers. Dropout was added to the final LSTM layer when using multiple layers to prevent overfitting.
+
+\subsubsection{Training}
+
+A rolling window of 30 days was employed to predict the stock price three days ahead. Each window’s prediction was generated using overlapping windows shifted by one day. For each prediction, the model outputs the close, open, high, low, and volume values three days in the future. 
+
+Windows are shuffled and batched
+
+In order to get the model to output 3 future values and auto-regressive approach was used. 
+For each window, the model is first given the 30 day window as input and predicts a single day. The predicted day is then appended to the 30 day input and the these 31 days are used as input. This is repeated until 3 days are predicted. 
+
+\subsubsection{Loss}
+
+Various loss functions were tested to improve training stability and accuracy, including Mean Squared Error (MSE), Mean Absolute Error (MAE, L1Loss), and the Huber loss(SmoothL1Loss).
+
+MSE is sensitive to outliers while MAE is not. Huber loss is the combination of both\cite{loss_functions}. 
+
+\subsubsection{Optimiser}
+
+The Adam optimiser was used to train the model. A weight decay of $1 \times 10^{-5}$ was applied to the optimiser to prevent overfitting for all experiments.
+
+\subsubsection{Early Stopping}
+
+The model was trained for up to 2000 epochs, though this upper limit was never reached due to early stopping criteria. After each epoch, the validation loss was evaluated. Whenever the validation loss improved, the model parameters were saved as a checkpoint. If the validation loss did not improve for 50 consecutive epochs, the training process was halted, and the best checkpoint was restored for subsequent evaluation and inference on the test set.
+

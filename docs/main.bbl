@@ -1,0 +1,33 @@
+\begin{thebibliography}{5}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aroussi(2024)]{yfinance}
+Ran Aroussi.
+\newblock yfinance.
+\newblock \emph{PyPI}, 2024.
+
+\bibitem[Awan(2024)]{loss_functions}
+Abid~Ali Awan.
+\newblock 5 useful loss functions.
+\newblock \emph{Machine Learning Mastery}, 2024.
+
+\bibitem[Finance(2024)]{goog}
+Yahoo Finance.
+\newblock Alphabet inc. (goog).
+\newblock \emph{Yahoo Finance}, 2024.
+
+\bibitem[GeeksforGeeks(2024)]{rnn_pytorch}
+GeeksforGeeks.
+\newblock Implementing recurrent neural networks in pytorch.
+\newblock \emph{GeeksforGeeks}, 2024.
+
+\bibitem[Keith(2022)]{lstm}
+Michael Keith.
+\newblock Exploring the lstm neural network model for time series.
+\newblock \emph{Towards Data Science}, 2022.
+
+\end{thebibliography}
